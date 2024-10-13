@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "proper-pet-tp",
+	"version": "${version}",
+	"name": "PPeTP",
+	"description": "Fixing pet teleportation to work across long distances",
+	"authors": [
+		"TheEpicBlock"
+	],
+	"contact": {
+		"homepage": "https://github.com/TheEpicBlock/PPeTP/blob/master/README.md",
+		"sources": "https://github.com/TheEpicBlock/PPeTP"
+	},
+	"license": "",
+	"icon": "assets/proper-pet-tp/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"nl.theepicblock.ppetp.PPeTP"
+		]
+	},
+	"mixins": [
+		"proper-pet-tp.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.2",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+	}
+}
