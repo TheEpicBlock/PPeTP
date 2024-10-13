@@ -40,10 +40,12 @@ public class PetTeleporter {
      * applied {@link TameableEntity#shouldTryTeleportToOwner()}
      */
     public static boolean shouldTeleportToInventory(TameableEntity pet, LivingEntity owner) {
-        // Teleport when 14 blocks away horizontally.
+        // Teleport when 48 blocks away horizontally.
         // Vanilla tp kicks in at 12 blocks away any direction.
+        // Note that there's also an additional check for when the chunk unloads, which
+        // is separate from this condition
         var dist = Math.abs(pet.getPos().horizontalLengthSquared() - owner.getPos().horizontalLengthSquared());
-        return dist >= (14 * 14);
+        return dist >= (48 * 48);
     }
 
     /**
