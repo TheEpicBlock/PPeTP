@@ -16,6 +16,26 @@ public class PetTeleporter {
     }
 
     /**
+     * The pet is far enough that it's almost getting unloaded! It needs to get tp'ed right now.
+     * This method ignores the distance requirement since it's clearly too far away already.
+     */
+    public static void petAlmostUnloaded(TameableEntity pet) {
+        if (pet.cannotFollowOwner()) {
+            // Nvm, the pet is not following us right now
+            return;
+        }
+        var server = pet.getWorld().getServer();
+        if (server == null) return;
+
+        // We can't use the normal getOwner method because the player might've died
+        var ownerUuid = pet.getOwnerUuid();
+        var owner = server.getPlayerManager().getPlayer(ownerUuid);
+        if (owner instanceof ServerPlayerEntity player) {
+            teleportToInventory(pet, player);
+        }
+    }
+
+    /**
      * Determines if a teleport to the inventory should occur. There may be more conditions
      * applied {@link TameableEntity#shouldTryTeleportToOwner()}
      */

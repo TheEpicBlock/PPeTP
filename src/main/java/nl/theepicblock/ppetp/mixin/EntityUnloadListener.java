@@ -6,6 +6,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.entity.EntityLike;
 import net.minecraft.world.entity.EntityTrackingStatus;
 import net.minecraft.world.entity.SectionedEntityCache;
+import nl.theepicblock.ppetp.PetTeleporter;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 public abstract class EntityUnloadListener {
     @Shadow @Final
     SectionedEntityCache<EntityLike> cache;
+
+    @Shadow @Final private static Logger LOGGER;
 
     @Inject(method = "updateTrackingStatus(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/entity/EntityTrackingStatus;)V", at = @At("HEAD"))
     private void onUnload(ChunkPos chunkPos, EntityTrackingStatus trackingStatus, CallbackInfo ci) {
@@ -35,7 +39,8 @@ public abstract class EntityUnloadListener {
             });
 
             for (var pet : petsToCheck) {
-                pet.tryTeleportToOwner();
+                LOGGER.info("Pet managed to get caught in an unloaded chunk ("+pet+")");
+                PetTeleporter.petAlmostUnloaded(pet);
             }
         }
     }
