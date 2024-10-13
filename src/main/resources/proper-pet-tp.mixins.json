@@ -3,6 +3,7 @@
   "package": "nl.theepicblock.ppetp.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EntityUnloadListener",
     "EntityAccessor",
     "ServerPlayerEntityMixin",
     "TameableEntityAccessor",
