@@ -59,7 +59,7 @@ public class PlayerPetStorage {
         }
 
         var entity = optionalEntity.get();
-        entity.setPosition(pos.toCenterPos());
+        entity.setPosition(pos.toBottomCenterPos());
         return world.tryLoadEntity(entity);
     }
 
