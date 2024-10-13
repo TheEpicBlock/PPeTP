@@ -11,7 +11,7 @@
 		"homepage": "https://github.com/TheEpicBlock/PPeTP/blob/master/README.md",
 		"sources": "https://github.com/TheEpicBlock/PPeTP"
 	},
-	"license": "",
+	"license": "LGPL-3.0-or-later",
 	"icon": "assets/proper-pet-tp/icon.png",
 	"environment": "*",
 	"entrypoints": {
