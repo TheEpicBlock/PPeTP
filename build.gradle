@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.7-SNAPSHOT'
 	id 'maven-publish'
+	id "com.modrinth.minotaur" version "2.+"
 }
 
 version = project.mod_version
@@ -75,4 +76,14 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
+}
+
+modrinth {
+	token = "$System.env.MODRINTH_TOKEN"
+	projectId = project.modrinth_project
+	versionNumber = project.version
+	uploadFile = remapJar
+	loaders = ["fabric", "quilt"]
+	changelog = System.getenv("CHANGELOG")
+	syncBodyFrom = "<!--DO NOT EDIT MANUALLY: synced from gh readme-->\n" + rootProject.file("README.md").text
 }
