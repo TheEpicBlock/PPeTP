@@ -24,15 +24,23 @@ public class PetTeleporter {
             // Nvm, the pet is not following us right now
             return;
         }
-        var server = pet.getWorld().getServer();
-        if (server == null) return;
 
         // We can't use the normal getOwner method because the player might've died
-        var ownerUuid = pet.getOwnerUuid();
-        var owner = server.getPlayerManager().getPlayer(ownerUuid);
-        if (owner instanceof ServerPlayerEntity player) {
-            teleportToInventory(pet, player);
+        var owner = getOwner(pet);
+        if (owner != null) {
+            teleportToInventory(pet, owner);
         }
+    }
+
+    /**
+     * Alternative implementation of {@link TameableEntity#getOwner()} that accounts for
+     * the player being dead, or in a different dimension
+     */
+    public static ServerPlayerEntity getOwner(TameableEntity pet) {
+        var server = pet.getWorld().getServer();
+        if (server == null) return null;
+        var ownerUuid = pet.getOwnerUuid();
+        return server.getPlayerManager().getPlayer(ownerUuid);
     }
 
     /**
