@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class PlayerPetStorage {
@@ -24,7 +25,7 @@ public class PlayerPetStorage {
      * The instances are kept around purely so functions can be run on them. We
      * reserialize them from nbt when they actually get put into the world.
      */
-    private final List<Pair<@Nullable TameableEntity, NbtCompound>> entitydatas = new ArrayList<>();
+    private final List<Pair<@Nullable TameableEntity, PetEntry>> entitydatas = new ArrayList<>();
 
     public void tick(ServerPlayerEntity owner) {
         if (owner.getServerWorld() == null) return;
@@ -33,6 +34,9 @@ public class PlayerPetStorage {
         var iter = entitydatas.iterator();
         while (iter.hasNext()) {
             var pair = iter.next();
+            if (!canExtractPet(owner, pair.getRight())) {
+                continue;
+            }
             Predicate<BlockPos> spotValidator;
 
             var e = pair.getLeft();
@@ -45,11 +49,19 @@ public class PlayerPetStorage {
             }
             var spot = SpotFinder.findSpot(owner, spotValidator);
             if (spot != null) {
-                if (dropEntityInWorld(pair.getRight(), world, spot)) {
+                if (dropEntityInWorld(pair.getRight().data(), world, spot)) {
                     iter.remove();
                 }
             }
         }
+    }
+
+    /**
+     * @return if the pet should be extracted at this current time
+     */
+    private boolean canExtractPet(ServerPlayerEntity owner, PetEntry e) {
+        // Maintain minecraft's rule of only teleporting into the same dimension
+        return e.sourceDimension == null || Objects.equals(owner.getWorld().getDimensionEntry().getIdAsString(), e.sourceDimension());
     }
 
     private boolean dropEntityInWorld(NbtCompound data, ServerWorld world, BlockPos pos) {
@@ -68,16 +80,25 @@ public class PlayerPetStorage {
      * the entity from the world is a responsibility of the caller.
      */
     public boolean insert(TameableEntity entity) {
+        // Serialize the entity to nbt. This will be the canonical representation
         var data = new NbtCompound();
         var success = entity.saveNbt(data);
+        // Unable to save to nbt? Better abort to avoid data loss
         if (!success) return false;
-        entitydatas.add(new Pair<>(entity, data));
+
+        // Try to get the entity's dimension
+        var world = entity.getWorld();
+        var dimensionId = world == null ? null : world.getDimensionEntry().getIdAsString();
+
+        // Save the pet
+        var petEntry = new PetEntry(dimensionId, data);
+        entitydatas.add(new Pair<>(entity, petEntry));
         return true;
     }
 
     public NbtList write() {
         var list = new NbtList();
-        entitydatas.forEach(pair -> list.add(pair.getRight()));
+        entitydatas.forEach(pair -> list.add(pair.getRight().toPlayerNbt()));
         return list;
     }
 
@@ -86,14 +107,14 @@ public class PlayerPetStorage {
      */
     public void read(NbtList data, ServerWorld world) {
         if (world == null) {
-            data.forEach(e -> entitydatas.add(new Pair<>(null, (NbtCompound)e)));
+            data.forEach(e -> entitydatas.add(new Pair<>(null, PetEntry.fromPlayerNbt((NbtCompound)e))));
             return;
         }
 
         data.forEach(e -> {
             entitydatas.add(new Pair<>(
                     EntityType.getEntityFromNbt((NbtCompound)e, world).orElse(null) instanceof TameableEntity te ? te : null,
-                    (NbtCompound)e
+                    PetEntry.fromPlayerNbt((NbtCompound)e)
             ));
         });
     }
@@ -104,5 +125,32 @@ public class PlayerPetStorage {
 
     public void readPlayerData(NbtCompound playerData, ServerPlayerEntity player) {
         this.read(playerData.getList(KEY, NbtElement.COMPOUND_TYPE), player.getServerWorld());
+    }
+
+    private record PetEntry(@Nullable String sourceDimension, NbtCompound data) {
+        public static PetEntry fromPlayerNbt(NbtCompound d) {
+            if (!d.contains("sourceDimension") || !d.contains("data") || d.getKeys().size() > 6) {
+                // This is likely still in the old format, where only entity data was stored without the dimension
+                return new PetEntry(null, d);
+            } else {
+                var dim = d.getString("sourceDimension");
+                if (Objects.equals(dim, "")) {
+                    dim = null;
+                }
+                var data = d.getCompound("data");
+                return new PetEntry(dim, data);
+            }
+        }
+
+        public NbtCompound toPlayerNbt() {
+            var comp = new NbtCompound();
+            if (sourceDimension() != null) {
+                comp.putString("sourceDimension", sourceDimension());
+            } else {
+                comp.putString("sourceDimension", "");
+            }
+            comp.put("data", data());
+            return comp;
+        }
     }
 }
