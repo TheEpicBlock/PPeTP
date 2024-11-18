@@ -1,0 +1,8 @@
+{
+	PPeTP: [
+		{
+			id: "minecraft:cat",
+			variant: "minecraft:british"
+		}
+	]
+}

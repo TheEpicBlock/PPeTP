@@ -1,0 +1,11 @@
+{
+	PPeTP: [
+		{
+		    sourceDimension: "minecraft:overworld",
+		    data: {
+                id: "minecraft:cat",
+                variant: "minecraft:british"
+			}
+		}
+	]
+}

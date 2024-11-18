@@ -38,10 +38,9 @@ public abstract class AddNbtToSchema extends IdentifierNormalizingSchema {
         return DSL.allWithRemainder(
                 DSL.optional(DSL.field("PPeTP", DSL.list(
                         DSL.or(
-                                DSL.compoundList(
-                                        DSL.optionalFields("data", TypeReferences.ENTITY_TREE.in(SCHEMA))
-                                ),
-                                // Type was inserted directly in previous versions of the mod
+                                // This is the new way of storing things
+                                DSL.field("data", TypeReferences.ENTITY_TREE.in(SCHEMA)),
+                                // But in previous versions of the mod the type was inserted directly
                                 TypeReferences.ENTITY_TREE.in(SCHEMA)
                         )
                 ))),
