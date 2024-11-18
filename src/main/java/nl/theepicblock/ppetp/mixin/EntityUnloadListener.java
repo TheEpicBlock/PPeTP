@@ -39,7 +39,6 @@ public abstract class EntityUnloadListener {
             });
 
             for (var pet : petsToCheck) {
-                LOGGER.info("Pet managed to get caught in an unloaded chunk ("+pet+")");
                 PetTeleporter.petAlmostUnloaded(pet);
             }
         }
