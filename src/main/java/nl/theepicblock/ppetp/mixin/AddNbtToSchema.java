@@ -36,7 +36,15 @@ public abstract class AddNbtToSchema extends IdentifierNormalizingSchema {
     @ModifyReturnValue(method = "method_5260", at = @At("RETURN"))
     private static TypeTemplate onRegister(TypeTemplate original) {
         return DSL.allWithRemainder(
-                DSL.optional(DSL.field("PPeTP", DSL.list(TypeReferences.ENTITY_TREE.in(SCHEMA)))),
+                DSL.optional(DSL.field("PPeTP", DSL.list(
+                        DSL.or(
+                                DSL.compoundList(
+                                        DSL.optionalFields("data", TypeReferences.ENTITY_TREE.in(SCHEMA))
+                                ),
+                                // Type was inserted directly in previous versions of the mod
+                                TypeReferences.ENTITY_TREE.in(SCHEMA)
+                        )
+                ))),
                 original
         );
     }
