@@ -48,6 +48,10 @@ public class PetTeleporter {
      * applied {@link TameableEntity#shouldTryTeleportToOwner()}
      */
     public static boolean shouldTeleportToInventory(TameableEntity pet, LivingEntity owner) {
+        if (pet.getWorld() != owner.getWorld()) {
+            // Different dimension? That's pretty far away as far as I'm concerned!
+            return true;
+        }
         // Teleport when 48 blocks away horizontally.
         // Vanilla tp kicks in at 12 blocks away any direction.
         // Note that there's also an additional check for when the chunk unloads, which
