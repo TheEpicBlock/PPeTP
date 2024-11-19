@@ -1,0 +1,3 @@
+{
+  "gamerule.petTeleportCrossDimension": "Controls if pets (wolfs, cats, etc) should follow players across dimensions, even if they didn't explicitly touch a portal"
+}

@@ -60,8 +60,16 @@ public class PlayerPetStorage {
      * @return if the pet should be extracted at this current time
      */
     private boolean canExtractPet(ServerPlayerEntity owner, PetEntry e) {
-        // Maintain minecraft's rule of only teleporting into the same dimension
-        return e.sourceDimension == null || Objects.equals(owner.getWorld().getDimensionEntry().getIdAsString(), e.sourceDimension());
+        var gameRules = owner.getServerWorld().getGameRules();
+        if (!gameRules.getBoolean(PPeTP.SHOULD_TP_CROSS_DIMENSIONAL)) {
+            // Maintain minecraft's rule of only teleporting into the same dimension
+            if (e.sourceDimension != null && !Objects.equals(owner.getWorld().getDimensionEntry().getIdAsString(), e.sourceDimension())) {
+                return false;
+            }
+        }
+
+        // No objections to trying to extract the pet
+        return true;
     }
 
     private boolean dropEntityInWorld(NbtCompound data, ServerWorld world, BlockPos pos) {
