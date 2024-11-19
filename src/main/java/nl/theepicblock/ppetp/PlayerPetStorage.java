@@ -65,6 +65,10 @@ public class PlayerPetStorage {
      * @return if the pet should be extracted at this current time
      */
     private boolean canExtractPet(ServerPlayerEntity owner, PetEntry e) {
+        if (owner.isSpectator()) {
+            return false;
+        }
+
         var gameRules = owner.getServerWorld().getGameRules();
         if (!gameRules.getBoolean(PPeTP.SHOULD_TP_CROSS_DIMENSIONAL)) {
             // Maintain minecraft's rule of only teleporting into the same dimension
