@@ -5,12 +5,17 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import nl.theepicblock.ppetp.mixin.EntityAccessor;
 import nl.theepicblock.ppetp.mixin.TameableEntityAccessor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -63,7 +68,7 @@ public class PlayerPetStorage {
         var gameRules = owner.getServerWorld().getGameRules();
         if (!gameRules.getBoolean(PPeTP.SHOULD_TP_CROSS_DIMENSIONAL)) {
             // Maintain minecraft's rule of only teleporting into the same dimension
-            if (e.sourceDimension != null && !Objects.equals(owner.getWorld().getDimensionEntry().getIdAsString(), e.sourceDimension())) {
+            if (e.sourceDimension != null && !Objects.equals(owner.getWorld().getRegistryKey().getValue(), e.sourceDimension())) {
                 return false;
             }
         }
@@ -96,7 +101,7 @@ public class PlayerPetStorage {
 
         // Try to get the entity's dimension
         var world = entity.getWorld();
-        var dimensionId = world == null ? null : world.getDimensionEntry().getIdAsString();
+        var dimensionId = world == null ? null : world.getRegistryKey().getValue();
 
         // Save the pet
         var petEntry = new PetEntry(dimensionId, data);
@@ -115,14 +120,14 @@ public class PlayerPetStorage {
      */
     public void read(NbtList data, ServerWorld world) {
         if (world == null) {
-            data.forEach(e -> entitydatas.add(new Pair<>(null, PetEntry.fromPlayerNbt((NbtCompound)e))));
+            data.forEach(e -> entitydatas.add(new Pair<>(null, PetEntry.fromPlayerNbt((NbtCompound)e, world.getServer()))));
             return;
         }
 
         data.forEach(e -> {
             entitydatas.add(new Pair<>(
                     EntityType.getEntityFromNbt((NbtCompound)e, world).orElse(null) instanceof TameableEntity te ? te : null,
-                    PetEntry.fromPlayerNbt((NbtCompound)e)
+                    PetEntry.fromPlayerNbt((NbtCompound)e, world.getServer())
             ));
         });
     }
@@ -135,25 +140,28 @@ public class PlayerPetStorage {
         this.read(playerData.getList(KEY, NbtElement.COMPOUND_TYPE), player.getServerWorld());
     }
 
-    private record PetEntry(@Nullable String sourceDimension, NbtCompound data) {
-        public static PetEntry fromPlayerNbt(NbtCompound d) {
+    private record PetEntry(@Nullable Identifier sourceDimension, NbtCompound data) {
+        public static @NotNull PetEntry fromPlayerNbt(NbtCompound d, MinecraftServer server) {
             if (!d.contains("sourceDimension") || !d.contains("data") || d.getKeys().size() > 6) {
                 // This is likely still in the old format, where only entity data was stored without the dimension
                 return new PetEntry(null, d);
             } else {
                 var dim = d.getString("sourceDimension");
-                if (Objects.equals(dim, "")) {
-                    dim = null;
+                var dimId = Objects.equals(dim, "") ? null : Identifier.tryParse(dim);
+                if (dimId != null && server.getWorld(RegistryKey.of(RegistryKeys.WORLD, dimId)) == null) {
+                    // This world no longer exists
+                    dimId = null;
                 }
+
                 var data = d.getCompound("data");
-                return new PetEntry(dim, data);
+                return new PetEntry(dimId, data);
             }
         }
 
-        public NbtCompound toPlayerNbt() {
+        public @NotNull NbtCompound toPlayerNbt() {
             var comp = new NbtCompound();
             if (sourceDimension() != null) {
-                comp.putString("sourceDimension", sourceDimension());
+                comp.putString("sourceDimension", sourceDimension().toString());
             } else {
                 comp.putString("sourceDimension", "");
             }
