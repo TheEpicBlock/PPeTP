@@ -8,7 +8,6 @@ import net.minecraft.world.entity.EntityTrackingStatus;
 import net.minecraft.world.entity.SectionedEntityCache;
 import nl.theepicblock.ppetp.PPeTP;
 import nl.theepicblock.ppetp.PetTeleporter;
-import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

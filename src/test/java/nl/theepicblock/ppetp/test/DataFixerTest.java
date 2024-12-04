@@ -8,7 +8,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.nbt.visitor.StringNbtWriter;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
