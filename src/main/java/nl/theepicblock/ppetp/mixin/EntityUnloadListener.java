@@ -6,6 +6,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.entity.EntityLike;
 import net.minecraft.world.entity.EntityTrackingStatus;
 import net.minecraft.world.entity.SectionedEntityCache;
+import nl.theepicblock.ppetp.PPeTP;
 import nl.theepicblock.ppetp.PetTeleporter;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -26,21 +27,25 @@ public abstract class EntityUnloadListener {
 
     @Inject(method = "updateTrackingStatus(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/entity/EntityTrackingStatus;)V", at = @At("HEAD"))
     private void onUnload(ChunkPos chunkPos, EntityTrackingStatus trackingStatus, CallbackInfo ci) {
-        if (!trackingStatus.shouldTick()) {
-            var l = chunkPos.toLong();
-            var sections = this.cache.getTrackingSections(l);
-            var petsToCheck = new ArrayList<TameableEntity>();
-            sections.forEach(section -> {
-                section.stream().forEach(e -> {
-                    if (e instanceof TameableEntity pet) {
-                        petsToCheck.add(pet);
-                    }
+        try {
+            if (!trackingStatus.shouldTick()) {
+                var l = chunkPos.toLong();
+                var sections = this.cache.getTrackingSections(l);
+                var petsToCheck = new ArrayList<TameableEntity>();
+                sections.forEach(section -> {
+                    section.stream().forEach(e -> {
+                        if (e instanceof TameableEntity pet) {
+                            petsToCheck.add(pet);
+                        }
+                    });
                 });
-            });
 
-            for (var pet : petsToCheck) {
-                PetTeleporter.petAlmostUnloaded(pet);
+                for (var pet : petsToCheck) {
+                    PetTeleporter.petAlmostUnloaded(pet);
+                }
             }
+        } catch (Exception e) {
+            PPeTP.LOGGER.error("Error processing chunk unload", e);
         }
     }
 }
