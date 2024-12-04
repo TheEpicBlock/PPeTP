@@ -23,8 +23,6 @@ public abstract class EntityUnloadListener {
     @Shadow @Final
     SectionedEntityCache<EntityLike> cache;
 
-    @Shadow @Final private static Logger LOGGER;
-
     @Inject(method = "updateTrackingStatus(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/entity/EntityTrackingStatus;)V", at = @At("HEAD"))
     private void onUnload(ChunkPos chunkPos, EntityTrackingStatus trackingStatus, CallbackInfo ci) {
         try {
