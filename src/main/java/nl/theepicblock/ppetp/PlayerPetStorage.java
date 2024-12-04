@@ -121,10 +121,11 @@ public class PlayerPetStorage {
 
     /**
      * @param world used for context on registries
+     * @param server server used for context on if certain worlds exist
      */
-    public void read(NbtList data, ServerWorld world) {
+    public void read(NbtList data, ServerWorld world, MinecraftServer server) {
         if (world == null) {
-            data.forEach(e -> entitydatas.add(new Pair<>(null, PetEntry.fromPlayerNbt((NbtCompound)e, world.getServer()))));
+            data.forEach(e -> entitydatas.add(new Pair<>(null, PetEntry.fromPlayerNbt((NbtCompound)e, server))));
             return;
         }
 
@@ -141,18 +142,18 @@ public class PlayerPetStorage {
     }
 
     public void readPlayerData(NbtCompound playerData, ServerPlayerEntity player) {
-        this.read(playerData.getList(KEY, NbtElement.COMPOUND_TYPE), player.getServerWorld());
+        this.read(playerData.getList(KEY, NbtElement.COMPOUND_TYPE), player.getServerWorld(), player.getServer());
     }
 
     private record PetEntry(@Nullable Identifier sourceDimension, NbtCompound data) {
-        public static @NotNull PetEntry fromPlayerNbt(NbtCompound d, MinecraftServer server) {
+        public static @NotNull PetEntry fromPlayerNbt(@NotNull NbtCompound d, @Nullable MinecraftServer server) {
             if (!d.contains("sourceDimension") || !d.contains("data") || d.getKeys().size() > 6) {
                 // This is likely still in the old format, where only entity data was stored without the dimension
                 return new PetEntry(null, d);
             } else {
                 var dim = d.getString("sourceDimension");
                 var dimId = Objects.equals(dim, "") ? null : Identifier.tryParse(dim);
-                if (dimId != null && server.getWorld(RegistryKey.of(RegistryKeys.WORLD, dimId)) == null) {
+                if (server == null || (dimId != null && server.getWorld(RegistryKey.of(RegistryKeys.WORLD, dimId)) == null)) {
                     // This world no longer exists
                     dimId = null;
                 }
