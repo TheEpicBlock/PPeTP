@@ -3,6 +3,7 @@ package nl.theepicblock.ppetp;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.jetbrains.annotations.Nullable;
 
 public class PetTeleporter {
     /**
@@ -36,10 +37,11 @@ public class PetTeleporter {
      * Alternative implementation of {@link TameableEntity#getOwner()} that accounts for
      * the player being dead, or in a different dimension
      */
-    public static ServerPlayerEntity getOwner(TameableEntity pet) {
+    public static @Nullable ServerPlayerEntity getOwner(TameableEntity pet) {
         var server = pet.getWorld().getServer();
         if (server == null) return null;
         var ownerUuid = pet.getOwnerUuid();
+        if (ownerUuid == null) return null;
         return server.getPlayerManager().getPlayer(ownerUuid);
     }
 
