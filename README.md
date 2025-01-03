@@ -1,4 +1,4 @@
-![A big body of water with a dog on one side, and a Minecraft character on the other. An arrow indicates the dog can still follow the character](./banner.png)
+![A big body of water with a dog on one side, and a Minecraft character on the other. An arrow indicates the dog can still follow the character](https://github.com/TheEpicBlock/PPeTP/raw/main/banner.png)
 # Proper Pet TP
 
 Have you ever been exploring, and found a cool dog, cat or parrot?
