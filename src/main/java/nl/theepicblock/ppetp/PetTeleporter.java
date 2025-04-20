@@ -21,6 +21,10 @@ public class PetTeleporter {
      * This method ignores the distance requirement since it's clearly too far away already.
      */
     public static void petAlmostUnloaded(TameableEntity pet) {
+        // Quick patch to prevent bdubs' from teleporting (they shouldn't)
+        if (pet.getType().getTranslationKey().equals("entity.lifesizebdubs.bdubsentity")) {
+            return;
+        }
         if (pet.cannotFollowOwner()) {
             // Nvm, the pet is not following us right now
             return;
