@@ -3,6 +3,7 @@ package nl.theepicblock.ppetp;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import nl.theepicblock.ppetp.compat.IndyPetsCompat;
 import org.jetbrains.annotations.Nullable;
 
 public class PetTeleporter {
@@ -28,9 +29,15 @@ public class PetTeleporter {
 
         // We can't use the normal getOwner method because the player might've died
         var owner = getOwner(pet);
-        if (owner != null) {
-            teleportToInventory(pet, owner);
+        if (owner == null) {
+            return;
         }
+
+        if (PPeTP.IS_INDYPETS_LOADED && IndyPetsCompat.isIndependent(pet)) {
+            // The pet is just walking around and not following, so ignore it
+            return;
+        }
+        teleportToInventory(pet, owner);
     }
 
     /**
