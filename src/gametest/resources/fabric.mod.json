@@ -6,6 +6,9 @@
   "icon": "assets/example-mod/icon.png",
   "environment": "*",
   "entrypoints": {
-    "fabric-gametest": ["nl.theepicblock.gametest.PPeTPGameTest"]
+    "fabric-gametest": [
+      "nl.theepicblock.gametest.PPeTPGameTest",
+      "nl.theepicblock.gametest.PPeTPSerializationTest"
+    ]
   }
 }
