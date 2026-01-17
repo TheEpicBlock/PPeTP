@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "ppetp-test",
+  "version": "1.0.0",
+  "name": "PPeTP testing",
+  "icon": "assets/example-mod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": ["nl.theepicblock.gametest.PPeTPGameTest"]
+  }
+}

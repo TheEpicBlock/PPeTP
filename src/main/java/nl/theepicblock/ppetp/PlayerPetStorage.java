@@ -177,6 +177,11 @@ public class PlayerPetStorage {
         });
     }
 
+    /// For testing purposes
+    public int getNumberOfStoredPets() {
+        return this.entitydatas.size();
+    }
+
     private record PetEntry(@Nullable Identifier sourceDimension, NbtCompound data) {
         public static final Codec<PetEntry> CODEC = RecordCodecBuilder.create(petEntryInstance ->
                 petEntryInstance.group(
