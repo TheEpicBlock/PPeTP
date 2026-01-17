@@ -16,7 +16,7 @@ public class PPeTP implements ModInitializer {
 	public static final GameRule<Boolean> SHOULD_TP_CROSS_DIMENSIONAL = GameRuleBuilder
             .forBoolean(false)
             .category(GameRuleCategory.MOBS)
-            .buildAndRegister(Identifier.of(MOD_ID, "petTeleportCrossDimension"));
+            .buildAndRegister(Identifier.of(MOD_ID, "pet_teleport_cross_dimension"));
 
 	@Override
 	public void onInitialize() {
