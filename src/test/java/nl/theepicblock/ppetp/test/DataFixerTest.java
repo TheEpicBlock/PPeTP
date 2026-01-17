@@ -13,6 +13,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.nio.charset.StandardCharsets;
 
+import static nl.theepicblock.ppetp.test.Util.nbtContains;
+import static nl.theepicblock.ppetp.test.Util.readNbtResource;
+
 /**
  * Checks if entities inside of player data are datafixed correctly.
  * Eg, if mojang changes one of the fields of entities, are those updated correctly in the player data
@@ -43,19 +46,5 @@ public class DataFixerTest {
 
         // Check if it was converted correctly
         Assertions.assertTrue(nbtContains(newNbt, NEW_NAME));
-    }
-
-    private boolean nbtContains(NbtElement c, String str) {
-        var writer = new StringNbtWriter();
-        c.accept(writer);
-        return writer.getString().contains(str);
-    }
-
-    private NbtCompound readNbtResource(String name) throws Exception {
-        try (var resource = DataFixerTest.class.getResourceAsStream(name)) {
-            assert resource != null;
-            var str = IOUtils.toString(resource, StandardCharsets.UTF_8);
-            return StringNbtReader.readCompound(str);
-        }
     }
 }
