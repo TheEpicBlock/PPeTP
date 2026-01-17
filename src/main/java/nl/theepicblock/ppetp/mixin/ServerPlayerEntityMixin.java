@@ -2,6 +2,8 @@ package nl.theepicblock.ppetp.mixin;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import nl.theepicblock.ppetp.PlayerDuck;
 import nl.theepicblock.ppetp.PlayerPetStorage;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,14 +27,14 @@ public class ServerPlayerEntityMixin implements PlayerDuck {
         this.petStorage = ((PlayerDuck)oldPlayer).PPeTP$getStorage();
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("HEAD"))
-    private void onWriteNbt(NbtCompound nbt, CallbackInfo ci) {
-        petStorage.writePlayerData(nbt);
+    @Inject(method = "writeCustomData", at = @At("HEAD"))
+    private void onWriteNbt(WriteView view, CallbackInfo ci) {
+        petStorage.writePlayerData(view);
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("HEAD"))
-    private void onReadNbt(NbtCompound nbt, CallbackInfo ci) {
-        petStorage.readPlayerData(nbt, ((ServerPlayerEntity)(Object)this));
+    @Inject(method = "readCustomData", at = @At("HEAD"))
+    private void onReadNbt(ReadView view, CallbackInfo ci) {
+        petStorage.readPlayerData(view, ((ServerPlayerEntity)(Object)this));
     }
 
     @Override

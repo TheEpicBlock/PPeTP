@@ -38,9 +38,11 @@ public class PetTeleporter {
      * the player being dead, or in a different dimension
      */
     public static @Nullable ServerPlayerEntity getOwner(TameableEntity pet) {
-        var server = pet.getWorld().getServer();
+        var server = pet.getEntityWorld().getServer();
         if (server == null) return null;
-        var ownerUuid = pet.getOwnerUuid();
+        var ref = pet.getOwnerReference();
+        if (ref == null) return null;
+        var ownerUuid = ref.getUuid();
         if (ownerUuid == null) return null;
         return server.getPlayerManager().getPlayer(ownerUuid);
     }
@@ -50,7 +52,7 @@ public class PetTeleporter {
      * applied {@link TameableEntity#shouldTryTeleportToOwner()}
      */
     public static boolean shouldTeleportToInventory(TameableEntity pet, LivingEntity owner) {
-        if (pet.getWorld() != owner.getWorld()) {
+        if (pet.getEntityWorld() != owner.getEntityWorld()) {
             // Different dimension? That's pretty far away as far as I'm concerned!
             return true;
         }
@@ -58,7 +60,7 @@ public class PetTeleporter {
         // Vanilla tp kicks in at 12 blocks away any direction.
         // Note that there's also an additional check for when the chunk unloads, which
         // is separate from this condition
-        var dist = Math.abs(pet.getPos().horizontalLengthSquared() - owner.getPos().horizontalLengthSquared());
+        var dist = Math.abs(pet.getEntityPos().subtract(owner.getEntityPos()).horizontalLengthSquared());
         return dist >= (48 * 48);
     }
 

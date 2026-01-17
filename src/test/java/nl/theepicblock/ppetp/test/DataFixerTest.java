@@ -47,15 +47,15 @@ public class DataFixerTest {
 
     private boolean nbtContains(NbtElement c, String str) {
         var writer = new StringNbtWriter();
-        var string = writer.apply(c);
-        return string.contains(str);
+        c.accept(writer);
+        return writer.getString().contains(str);
     }
 
     private NbtCompound readNbtResource(String name) throws Exception {
         try (var resource = DataFixerTest.class.getResourceAsStream(name)) {
             assert resource != null;
             var str = IOUtils.toString(resource, StandardCharsets.UTF_8);
-            return StringNbtReader.parse(str);
+            return StringNbtReader.readCompound(str);
         }
     }
 }
