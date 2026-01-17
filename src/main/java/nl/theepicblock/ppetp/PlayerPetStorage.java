@@ -141,7 +141,7 @@ public class PlayerPetStorage {
             var dimensionId = world == null ? null : world.getRegistryKey().getValue();
 
             // Save the pet
-            var petEntry = new PetEntry(dimensionId, data);
+            var petEntry = new PetEntry(Optional.ofNullable(dimensionId), data);
             entitydatas.add(new Pair<>(entity, petEntry));
             return true;
         }
@@ -182,15 +182,15 @@ public class PlayerPetStorage {
         return this.entitydatas.size();
     }
 
-    private record PetEntry(@Nullable Identifier sourceDimension, NbtCompound data) {
+    private record PetEntry(Optional<Identifier> sourceDimension, NbtCompound data) {
         public static final Codec<PetEntry> CODEC = RecordCodecBuilder.create(petEntryInstance ->
                 petEntryInstance.group(
-                        Identifier.CODEC.fieldOf("sourceDimension").forGetter(PetEntry::sourceDimension),
+                        Identifier.CODEC.optionalFieldOf("sourceDimension").forGetter(PetEntry::sourceDimension),
                         NbtCompound.CODEC.fieldOf("data").forGetter(PetEntry::data)
                 ).apply(petEntryInstance, PetEntry::new));
 
         private PetEntry verified(MinecraftServer server) {
-            if (server.getWorld(RegistryKey.of(RegistryKeys.WORLD, sourceDimension)) == null) {
+            if (sourceDimension.isPresent() && server.getWorld(RegistryKey.of(RegistryKeys.WORLD, sourceDimension.get())) == null) {
                 return new PetEntry(null, this.data);
             } else {
                 return this;

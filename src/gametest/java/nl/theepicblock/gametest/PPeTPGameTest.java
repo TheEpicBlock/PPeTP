@@ -30,7 +30,7 @@ public class PPeTPGameTest {
 
     @GameTest
     public void canReadNewData(TestContext context) throws Exception {
-        canReadData(context, "/new_format.snbt", LATEST_VERSION);
+        canReadData(context, "/new_format.snbt", 4292);
     }
 
     public void canReadData(TestContext context, String name, int version) throws Exception {
