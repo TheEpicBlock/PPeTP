@@ -92,7 +92,7 @@ public class PlayerPetStorage {
         var gameRules = owner.getEntityWorld().getGameRules();
         if (!gameRules.getValue(PPeTP.SHOULD_TP_CROSS_DIMENSIONAL)) {
             // Maintain minecraft's rule of only teleporting into the same dimension
-            if (e.sourceDimension != null && !Objects.equals(owner.getEntityWorld().getRegistryKey().getValue(), e.sourceDimension())) {
+            if (e.sourceDimension.isPresent() && !Objects.equals(owner.getEntityWorld().getRegistryKey().getValue(), e.sourceDimension().get())) {
                 return false;
             }
         }
@@ -131,7 +131,6 @@ public class PlayerPetStorage {
             NbtWriteView nbtWriteView = NbtWriteView.create(logging.makeChild(() -> ".ppetp"), entity.getRegistryManager());
 
             // Serialize the entity to nbt. This will be the canonical representation
-            var data = new NbtCompound();
             var success = entity.saveSelfData(nbtWriteView);
             // Unable to save to nbt? Better abort to avoid data loss
             if (!success) return false;
@@ -141,7 +140,7 @@ public class PlayerPetStorage {
             var dimensionId = world == null ? null : world.getRegistryKey().getValue();
 
             // Save the pet
-            var petEntry = new PetEntry(Optional.ofNullable(dimensionId), data);
+            var petEntry = new PetEntry(Optional.ofNullable(dimensionId), nbtWriteView.getNbt());
             entitydatas.add(new Pair<>(entity, petEntry));
             return true;
         }

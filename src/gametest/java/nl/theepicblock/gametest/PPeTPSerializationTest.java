@@ -2,7 +2,6 @@ package nl.theepicblock.gametest;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
-import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.nbt.NbtCompound;
@@ -40,7 +39,7 @@ public class PPeTPSerializationTest {
 
         // Load data
         var reader = NbtReadView.create(new ErrorReporter.Logging(LOGGER), context.getWorld().getRegistryManager(), (NbtCompound)newNbt);
-        var player = FakePlayer.get(context.getWorld(), new GameProfile(UUID.randomUUID(), "4555555555555555521111111111111111111111111111111111111111111fddddddddddddddddddddddddddddcc")); // Player name provided by Mia, my cat
+        var player = FakePlayer.fakePlayer(context.getWorld());
         player.readData(reader);
 
         // Do checks
