@@ -11,7 +11,7 @@ public class PetTeleporter {
      * minecraft tries to teleport a pet.
      */
     public static void teleportPet(TameableEntity pet, LivingEntity owner) {
-        if (owner instanceof ServerPlayerEntity player && shouldTeleportToInventory(pet, owner)) {
+        if (owner instanceof ServerPlayerEntity player && isPetFarAway(pet, owner)) {
             teleportToInventory(pet, player);
         }
     }
@@ -49,9 +49,9 @@ public class PetTeleporter {
 
     /**
      * Determines if a teleport to the inventory should occur. There may be more conditions
-     * applied {@link TameableEntity#shouldTryTeleportToOwner()}
+     * applied by {@link TameableEntity#shouldTryTeleportToOwner()}
      */
-    public static boolean shouldTeleportToInventory(TameableEntity pet, LivingEntity owner) {
+    public static boolean isPetFarAway(TameableEntity pet, LivingEntity owner) {
         if (pet.getEntityWorld() != owner.getEntityWorld()) {
             // Different dimension? That's pretty far away as far as I'm concerned!
             return true;
