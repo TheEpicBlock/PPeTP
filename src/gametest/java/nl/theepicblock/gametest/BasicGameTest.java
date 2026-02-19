@@ -5,9 +5,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.math.BlockPos;
+import nl.theepicblock.gametest.util.FakePlayer;
 import nl.theepicblock.ppetp.PlayerDuck;
 
-public class PPeTPGameTest {
+public class BasicGameTest {
     /// Teleports a fake player somewhat far, not far enough to unload chunks, to a place where a pet can't just tp to
     @GameTest
     public void basicTp(TestContext context) {

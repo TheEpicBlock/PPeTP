@@ -1,4 +1,4 @@
-package nl.theepicblock.gametest;
+package nl.theepicblock.gametest.util;
 
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.impl.event.interaction.FakePlayerNetworkHandler;

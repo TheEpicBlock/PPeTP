@@ -9,14 +9,13 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.storage.NbtReadView;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.ErrorReporter;
+import nl.theepicblock.gametest.util.FakePlayer;
 import nl.theepicblock.ppetp.PlayerDuck;
 import nl.theepicblock.ppetp.test.Util;
 
-import java.util.UUID;
-
 import static nl.theepicblock.ppetp.PPeTP.LOGGER;
 
-public class PPeTPSerializationTest {
+public class SerializationTest {
     private static int LATEST_VERSION = 4661;
 
     @GameTest
