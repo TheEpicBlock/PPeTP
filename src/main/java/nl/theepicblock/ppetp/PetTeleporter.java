@@ -1,8 +1,10 @@
 package nl.theepicblock.ppetp;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import nl.theepicblock.ppetp.mixin.MobEntityAccessor;
 import org.jetbrains.annotations.Nullable;
 
 public class PetTeleporter {
@@ -18,18 +20,23 @@ public class PetTeleporter {
 
     /**
      * The pet is far enough that it's almost getting unloaded! It needs to get tp'ed right now.
-     * This method ignores the distance requirement since it's clearly too far away already.
      */
     public static void petAlmostUnloaded(TameableEntity pet) {
-        if (pet.cannotFollowOwner()) {
-            // Nvm, the pet is not following us right now
-            return;
-        }
+        // This method was called by a PPeTP mixin, instead of the tp being requested
+        // so we must take extra care to ensure that the pet actually wants to be tp'ed
 
-        // We can't use the normal getOwner method because the player might've died
-        var owner = getOwner(pet);
-        if (owner != null) {
-            teleportToInventory(pet, owner);
+        // To do this, we check if it has a follow owner goal, and if that goal can be started
+        // this should also ensure indypets compatibility, since they mixin to the canStart function
+        var goals = ((MobEntityAccessor)pet).getGoalSelector().getGoals();
+        FollowOwnerGoal goal = null;
+        for (var g : goals) { if (g.getGoal() instanceof FollowOwnerGoal fg) { goal = fg; break; } }
+
+        if (goal != null && goal.canStart()) {
+            // We can't use the normal getOwner method because the player might've died
+            var owner = getOwner(pet);
+            if (owner != null) {
+                teleportToInventory(pet, owner);
+            }
         }
     }
 
