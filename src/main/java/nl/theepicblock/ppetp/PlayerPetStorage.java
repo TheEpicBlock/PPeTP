@@ -185,6 +185,11 @@ public class PlayerPetStorage {
                         CompoundTag.CODEC.fieldOf("data").forGetter(PetEntry::data)
                 ).apply(petEntryInstance, PetEntry::new));
 
+        /**
+         * Creates a {@link PetEntry} where the {@link #sourceDimension()} has been verified to exist against the
+         * provided server. If the {@link #sourceDimension()} it will be replaced with {@link Optional#empty()} to
+         * indicate the pet is from an unknown dimension.
+         */
         private PetEntry verified(MinecraftServer server) {
             if (sourceDimension.isPresent() && server.getLevel(ResourceKey.create(Registries.DIMENSION, sourceDimension.get())) == null) {
                 return new PetEntry(null, this.data);
