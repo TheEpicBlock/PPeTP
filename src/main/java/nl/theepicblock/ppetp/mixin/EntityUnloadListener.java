@@ -26,7 +26,7 @@ public abstract class EntityUnloadListener {
     private void onUnload(ChunkPos chunkPos, Visibility trackingStatus, CallbackInfo ci) {
         try {
             if (!trackingStatus.isTicking()) {
-                var l = chunkPos.toLong();
+                var l = chunkPos.pack();
                 var sections = this.sectionStorage.getExistingSectionsInChunk(l);
                 var petsToCheck = new ArrayList<TamableAnimal>();
                 sections.forEach(section -> {

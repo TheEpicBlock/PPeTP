@@ -33,7 +33,7 @@ public abstract class AddNbtToSchema extends NamespacedSchema {
         SCHEMA = schemax;
     }
 
-    @ModifyReturnValue(method = "method_5260", at = @At("RETURN"))
+    @ModifyReturnValue(method = "lambda$registerTypes$2", at = @At("RETURN"))
     private static TypeTemplate onRegister(TypeTemplate original) {
         return DSL.allWithRemainder(
                 DSL.optional(DSL.field("PPeTP", DSL.list(
