@@ -2,10 +2,9 @@ package nl.theepicblock.ppetp.test;
 
 import com.mojang.serialization.Dynamic;
 import net.minecraft.SharedConstants;
-import net.minecraft.datafixer.Schemas;
-import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.nbt.*;
-import net.minecraft.nbt.visitor.StringNbtWriter;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.util.datafix.fixes.References;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,7 +33,7 @@ public class DataFixerTest {
         // This test tests the former format
 
         // Setup nbt
-        SharedConstants.createGameVersion();
+        SharedConstants.tryDetectVersion();
         var oldFormatNbt = readNbtResource(filename);
         // Sanity check
         Assertions.assertTrue(nbtContains(oldFormatNbt, OLD_NAME));
@@ -42,7 +41,7 @@ public class DataFixerTest {
 
         // Conversion
         var dyn = new Dynamic<>(NbtOps.INSTANCE, oldFormatNbt);
-        var newNbt = Schemas.getFixer().update(TypeReferences.PLAYER, dyn, OLD_VERSION, NEW_VERSION).cast(NbtOps.INSTANCE);
+        var newNbt = DataFixers.getDataFixer().update(References.PLAYER, dyn, OLD_VERSION, NEW_VERSION).cast(NbtOps.INSTANCE);
 
         // Check if it was converted correctly
         Assertions.assertTrue(nbtContains(newNbt, NEW_NAME));

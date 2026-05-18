@@ -1,25 +1,25 @@
 package nl.theepicblock.ppetp.test;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.nbt.visitor.StringNbtWriter;
 import org.apache.commons.io.IOUtils;
 
 import java.nio.charset.StandardCharsets;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTagVisitor;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 
 public class Util {
-    public static boolean nbtContains(NbtElement c, String str) {
-        var writer = new StringNbtWriter();
+    public static boolean nbtContains(Tag c, String str) {
+        var writer = new StringTagVisitor();
         c.accept(writer);
-        return writer.getString().contains(str);
+        return writer.build().contains(str);
     }
 
-    public static NbtCompound readNbtResource(String name) throws Exception {
+    public static CompoundTag readNbtResource(String name) throws Exception {
         try (var resource = DataFixerTest.class.getResourceAsStream(name)) {
             assert resource != null;
             var str = IOUtils.toString(resource, StandardCharsets.UTF_8);
-            return StringNbtReader.readCompound(str);
+            return TagParser.parseCompoundFully(str);
         }
     }
 }

@@ -7,10 +7,10 @@
     "AddNbtToSchema",
     "EntityAccessor",
     "EntityUnloadListener",
-    "MobEntityAccessor",
-    "ServerPlayerEntityMixin",
-    "TameableEntityAccessor",
-    "TameableEntityMixin"
+    "MobAccessor",
+    "ServerPlayerMixin",
+    "TameableAnimalAccessor",
+    "TameableAnimalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

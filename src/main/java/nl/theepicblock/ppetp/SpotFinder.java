@@ -1,16 +1,16 @@
 package nl.theepicblock.ppetp;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 
 public class SpotFinder {
-    public static @Nullable BlockPos findSpot(ServerPlayerEntity player, Predicate<BlockPos> spotValidator) {
+    public static @Nullable BlockPos findSpot(ServerPlayer player, Predicate<BlockPos> spotValidator) {
         var random = ThreadLocalRandom.current();
-        var origin = player.getBlockPos();
+        var origin = player.blockPosition();
 
         for(int i = 0; i < 10; ++i) {
             int j = random.nextInt(-3, 3);

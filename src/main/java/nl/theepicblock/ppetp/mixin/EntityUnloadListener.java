@@ -1,11 +1,5 @@
 package nl.theepicblock.ppetp.mixin;
 
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.server.world.ServerEntityManager;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.entity.EntityLike;
-import net.minecraft.world.entity.EntityTrackingStatus;
-import net.minecraft.world.entity.SectionedEntityCache;
 import nl.theepicblock.ppetp.PPeTP;
 import nl.theepicblock.ppetp.PetTeleporter;
 import org.spongepowered.asm.mixin.Final;
@@ -16,22 +10,28 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.entity.EntityAccess;
+import net.minecraft.world.level.entity.EntitySectionStorage;
+import net.minecraft.world.level.entity.PersistentEntitySectionManager;
+import net.minecraft.world.level.entity.Visibility;
 
-@Mixin(ServerEntityManager.class)
+@Mixin(PersistentEntitySectionManager.class)
 public abstract class EntityUnloadListener {
     @Shadow @Final
-    SectionedEntityCache<EntityLike> cache;
+    EntitySectionStorage<EntityAccess> sectionStorage;
 
-    @Inject(method = "updateTrackingStatus(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/entity/EntityTrackingStatus;)V", at = @At("HEAD"))
-    private void onUnload(ChunkPos chunkPos, EntityTrackingStatus trackingStatus, CallbackInfo ci) {
+    @Inject(method = "updateChunkStatus(Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/world/level/entity/Visibility;)V", at = @At("HEAD"))
+    private void onUnload(ChunkPos chunkPos, Visibility trackingStatus, CallbackInfo ci) {
         try {
-            if (!trackingStatus.shouldTick()) {
+            if (!trackingStatus.isTicking()) {
                 var l = chunkPos.toLong();
-                var sections = this.cache.getTrackingSections(l);
-                var petsToCheck = new ArrayList<TameableEntity>();
+                var sections = this.sectionStorage.getExistingSectionsInChunk(l);
+                var petsToCheck = new ArrayList<TamableAnimal>();
                 sections.forEach(section -> {
-                    section.stream().forEach(e -> {
-                        if (e instanceof TameableEntity pet) {
+                    section.getEntities().forEach(e -> {
+                        if (e instanceof TamableAnimal pet) {
                             petsToCheck.add(pet);
                         }
                     });

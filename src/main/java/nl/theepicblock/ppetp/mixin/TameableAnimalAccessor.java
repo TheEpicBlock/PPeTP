@@ -1,12 +1,12 @@
 package nl.theepicblock.ppetp.mixin;
 
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.TamableAnimal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(TameableEntity.class)
-public interface TameableEntityAccessor {
+@Mixin(TamableAnimal.class)
+public interface TameableAnimalAccessor {
     @Invoker
     boolean invokeCanTeleportTo(BlockPos pos);
 }

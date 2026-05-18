@@ -5,9 +5,8 @@ import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.datafixer.TypeReferences;
-
 import java.util.Map;
+import net.minecraft.util.datafix.fixes.References;
 
 public class PPeTPDataFixer extends DataFix {
     public PPeTPDataFixer(Schema outputSchema, boolean changesType) {
@@ -17,7 +16,7 @@ public class PPeTPDataFixer extends DataFix {
     @Override
     protected TypeRewriteRule makeRule() {
         return this.fixTypeEverywhereTyped("FixPPeTPFormat",
-                this.getInputSchema().getType(TypeReferences.PLAYER),
+                this.getInputSchema().getType(References.PLAYER),
                 (typed) ->
                     typed.update(DSL.remainderFinder(), dynamic ->
                         dynamic.update("PPeTP", field ->
