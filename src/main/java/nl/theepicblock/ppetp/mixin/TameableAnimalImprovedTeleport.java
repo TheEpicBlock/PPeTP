@@ -11,9 +11,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TamableAnimal.class)
-public class TameableAnimalMixin {
+public class TameableAnimalImprovedTeleport {
     @Inject(method = "tryToTeleportToOwner", at = @At("RETURN"))
     private void onTeleport(CallbackInfo ci, @Local LivingEntity owner) {
+        // Regular teleport failed, try our own teleport
         try {
             if (owner != null) {
                 PetTeleporter.teleportPet((TamableAnimal)(Object)this, owner);

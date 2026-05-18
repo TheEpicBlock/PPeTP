@@ -8,9 +8,9 @@
     "EntityAccessor",
     "EntityUnloadListener",
     "MobAccessor",
-    "ServerPlayerMixin",
+    "AddStorageToServerPlayer",
     "TameableAnimalAccessor",
-    "TameableAnimalMixin"
+    "TameableAnimalImprovedTeleport"
   ],
   "injectors": {
     "defaultRequire": 1

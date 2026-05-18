@@ -5,12 +5,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import nl.theepicblock.ppetp.mixin.MobAccessor;
-import nl.theepicblock.ppetp.mixin.TameableAnimalMixin;
+import nl.theepicblock.ppetp.mixin.TameableAnimalImprovedTeleport;
 import org.jetbrains.annotations.Nullable;
 
 public class PetTeleporter {
     /**
-     * Callback which is called by {@link TameableAnimalMixin} whenever
+     * Callback which is called by {@link TameableAnimalImprovedTeleport} whenever
      * minecraft tries to teleport a pet.
      */
     public static void teleportPet(TamableAnimal pet, LivingEntity owner) {
