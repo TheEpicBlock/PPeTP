@@ -12,7 +12,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TamableAnimal.class)
 public class TameableAnimalImprovedTeleport {
-    @Inject(method = "tryToTeleportToOwner", at = @At("RETURN"))
+    @Inject(
+            method = "tryToTeleportToOwner",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/TamableAnimal;teleportToAroundBlockPos(Lnet/minecraft/core/BlockPos;)V",
+                    shift = At.Shift.AFTER))
     private void onTeleport(CallbackInfo ci, @Local LivingEntity owner) {
         // Regular teleport failed, try our own teleport
         try {
