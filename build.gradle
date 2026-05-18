@@ -15,6 +15,7 @@ repositories {
 }
 
 loom {
+    splitEnvironmentSourceSets()
 	mods {
 		"proper-pet-tp" {
 			sourceSet sourceSets.main
