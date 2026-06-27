@@ -5,12 +5,9 @@ import net.minecraft.SharedConstants;
 import net.minecraft.nbt.*;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.nio.charset.StandardCharsets;
 
 import static nl.theepicblock.ppetp.test.Util.nbtContains;
 import static nl.theepicblock.ppetp.test.Util.readNbtResource;

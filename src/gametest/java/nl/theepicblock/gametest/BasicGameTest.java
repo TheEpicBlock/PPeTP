@@ -4,7 +4,9 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.phys.Vec3;
 import nl.theepicblock.gametest.util.FakePlayer;
 import nl.theepicblock.ppetp.PlayerDuck;
 
@@ -13,14 +15,14 @@ public class BasicGameTest {
     @GameTest
     public void basicTp(GameTestHelper context) {
         var world = context.getLevel();
-        var testCenter = context.absolutePos(BlockPos.ZERO).getBottomCenter();
+        var testCenter = Vec3.atBottomCenterOf(context.absolutePos(BlockPos.ZERO));
         var player = FakePlayer.fakePlayer(world);
         player.getAbilities().mayfly = true;
         player.getAbilities().flying = true;
         player.setPos(testCenter);
         world.addFreshEntity(player);
 
-        var pet = new Wolf(EntityType.WOLF, world);
+        var pet = new Wolf(EntityTypes.WOLF, world);
         world.addFreshEntity(pet);
         pet.tame(player);
         pet.setPos(testCenter);

@@ -4,10 +4,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.phys.Vec3;
 import nl.theepicblock.gametest.util.FakePlayer;
 import nl.theepicblock.ppetp.PetTeleporter;
 import nl.theepicblock.ppetp.PlayerDuck;
@@ -22,7 +20,7 @@ public class EntityShouldTPTest {
         var range = BlockPos.betweenClosed(testCenter, testCenter.offset(15,0,15)).iterator();
 
         for (var entityType : BuiltInRegistries.ENTITY_TYPE) {
-            var pos = range.next().getBottomCenter();
+            var pos = Vec3.atBottomCenterOf(range.next());
             var entity = entityType.create(world, EntitySpawnReason.COMMAND);
             if (entity == null) {
                 context.assertFalse(shouldTp(entityType), " precondition failed, "+BuiltInRegistries.ENTITY_TYPE.getKey(entityType)+" should tp but it could not be created");
@@ -56,9 +54,9 @@ public class EntityShouldTPTest {
 
     private static boolean shouldTp(EntityType<?> entity) {
         var mcEntitiesThatTp = List.of(
-                EntityType.WOLF,
-                EntityType.CAT,
-                EntityType.PARROT
+                EntityTypes.WOLF,
+                EntityTypes.CAT,
+                EntityTypes.PARROT
         );
         return mcEntitiesThatTp.contains(entity);
     }

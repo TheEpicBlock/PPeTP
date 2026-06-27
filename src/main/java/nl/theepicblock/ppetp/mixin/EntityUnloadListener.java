@@ -2,6 +2,7 @@ package nl.theepicblock.ppetp.mixin;
 
 import nl.theepicblock.ppetp.PPeTP;
 import nl.theepicblock.ppetp.PetTeleporter;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,13 +21,13 @@ import net.minecraft.world.level.entity.Visibility;
 @Mixin(PersistentEntitySectionManager.class)
 public abstract class EntityUnloadListener {
     @Shadow @Final
-    EntitySectionStorage<EntityAccess> sectionStorage;
+    private EntitySectionStorage<@NotNull EntityAccess> sectionStorage;
 
     @Inject(method = "updateChunkStatus(Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/world/level/entity/Visibility;)V", at = @At("HEAD"))
-    private void onUnload(ChunkPos chunkPos, Visibility trackingStatus, CallbackInfo ci) {
+    private void onUnload(ChunkPos pos, Visibility chunkStatus, CallbackInfo ci) {
         try {
-            if (!trackingStatus.isTicking()) {
-                var l = chunkPos.pack();
+            if (!chunkStatus.isTicking()) {
+                var l = pos.pack();
                 var sections = this.sectionStorage.getExistingSectionsInChunk(l);
                 var petsToCheck = new ArrayList<TamableAnimal>();
                 sections.forEach(section -> {

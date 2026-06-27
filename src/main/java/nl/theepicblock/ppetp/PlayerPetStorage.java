@@ -2,6 +2,7 @@ package nl.theepicblock.ppetp;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -11,15 +12,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import nl.theepicblock.ppetp.mixin.EntityAccessor;
 import nl.theepicblock.ppetp.mixin.TameableAnimalAccessor;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +38,7 @@ public class PlayerPetStorage {
      * The instances are kept around purely so functions can be run on them. We
      * reserialize them from nbt when they actually get put into the world.
      */
-    private List<Tuple<@Nullable TamableAnimal, PetEntry>> entitydatas = new ArrayList<>();
+    private List<Pair<@Nullable TamableAnimal, PetEntry>> entitydatas = new ArrayList<>();
     private boolean verified = false;
 
     public void tick(ServerPlayer owner) {
@@ -48,7 +46,7 @@ public class PlayerPetStorage {
 
         var world = owner.level();
         if (!verified && world.getServer() != null) {
-            this.entitydatas.replaceAll(entry -> new Tuple<>(entry.getA(), entry.getB().verified(world.getServer())));
+            this.entitydatas.replaceAll(entry -> Pair.of(entry.left(), entry.right().verified(world.getServer())));
             this.verified = true;
         }
 
@@ -56,12 +54,12 @@ public class PlayerPetStorage {
         var iter = entitydatas.iterator();
         while (iter.hasNext()) {
             var pair = iter.next();
-            if (!canExtractPet(owner, pair.getB())) {
+            if (!canExtractPet(owner, pair.right())) {
                 continue;
             }
             Predicate<BlockPos> spotValidator;
 
-            var e = pair.getA();
+            var e = pair.left();
             if (e != null) {
                 ((EntityAccessor)e).invokeSetLevel(world);
                 spotValidator = (pos) -> ((TameableAnimalAccessor)e).invokeCanTeleportTo(pos);
@@ -71,7 +69,7 @@ public class PlayerPetStorage {
             }
             var spot = SpotFinder.findSpot(owner, spotValidator);
             if (spot != null) {
-                if (dropEntityInWorld(owner.problemPath(), pair.getB().data(), world, spot)) {
+                if (dropEntityInWorld(owner.problemPath(), pair.right().data(), world, spot)) {
                     iter.remove();
                 }
             }
@@ -101,13 +99,13 @@ public class PlayerPetStorage {
     private boolean dropEntityInWorld(ProblemReporter.PathElement errorReporterContext, CompoundTag data, ServerLevel world, BlockPos pos) {
         try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(errorReporterContext, LOGGER)) {
             var dataReadView = TagValueInput.create(logging.forChild(() -> ".ppetp"), world.registryAccess(), data);
-            var optionalEntity = EntityType.create(dataReadView, world, EntitySpawnReason.LOAD);
+            var optionalEntity = EntityType.create(dataReadView, world, new EntitySpawnRequest(EntitySpawnReason.LOAD, false));
             if (optionalEntity.isEmpty()) {
                 return false;
             }
 
             var entity = optionalEntity.get();
-            entity.setPos(pos.getBottomCenter());
+            entity.setPos(Vec3.atBottomCenterOf(pos));
             return world.addWithUUID(entity);
         }
     }
@@ -115,7 +113,7 @@ public class PlayerPetStorage {
     private Optional<Entity> readData(ProblemReporter.PathElement errorReporterContext, CompoundTag data, ServerLevel world) {
         try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(errorReporterContext, LOGGER)) {
             var dataReadView = TagValueInput.create(logging.forChild(() -> ".ppetp"), world.registryAccess(), data);
-            return EntityType.create(dataReadView, world, EntitySpawnReason.LOAD);
+            return EntityType.create(dataReadView, world, new EntitySpawnRequest(EntitySpawnReason.LOAD, false));
         }
     }
 
@@ -138,7 +136,7 @@ public class PlayerPetStorage {
 
             // Save the pet
             var petEntry = new PetEntry(Optional.ofNullable(dimensionId), nbtWriteView.buildResult());
-            entitydatas.add(new Tuple<>(entity, petEntry));
+            entitydatas.add(Pair.of(entity, petEntry));
             return true;
         }
     }
@@ -146,7 +144,7 @@ public class PlayerPetStorage {
     public void writePlayerData(ValueOutput view) {
         var list = new ArrayList<PetEntry>(this.entitydatas.size());
         for (var pair : this.entitydatas) {
-            list.add(pair.getB());
+            list.add(pair.right());
         }
         view.store(KEY, CODEC, list);
     }
@@ -159,13 +157,13 @@ public class PlayerPetStorage {
             var world = player.level();
 
             if (world == null) {
-                list.forEach(e -> entitydatas.add(new Tuple<>(null, e)));
+                list.forEach(e -> entitydatas.add(Pair.of(null, e)));
                 return;
             }
 
             var errorCtx = player.problemPath();
             list.forEach(e -> {
-                entitydatas.add(new Tuple<>(
+                entitydatas.add(Pair.of(
                         readData(errorCtx, e.data(), world).orElse(null) instanceof TamableAnimal te ? te : null,
                         e)
                 );

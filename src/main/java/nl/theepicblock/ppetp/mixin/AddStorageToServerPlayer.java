@@ -22,18 +22,18 @@ public class AddStorageToServerPlayer implements PlayerDuck {
     }
 
     @Inject(method = "restoreFrom", at = @At("HEAD"))
-    private void onCopy(ServerPlayer oldPlayer, boolean alive, CallbackInfo ci) {
+    private void onCopy(ServerPlayer oldPlayer, boolean restoreAll, CallbackInfo ci) {
         this.petStorage = ((PlayerDuck)oldPlayer).PPeTP$getStorage();
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
-    private void onWriteNbt(ValueOutput view, CallbackInfo ci) {
-        petStorage.writePlayerData(view);
+    private void onWriteNbt(ValueOutput output, CallbackInfo ci) {
+        petStorage.writePlayerData(output);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
-    private void onReadNbt(ValueInput view, CallbackInfo ci) {
-        petStorage.readPlayerData(view, ((ServerPlayer)(Object)this));
+    private void onReadNbt(ValueInput input, CallbackInfo ci) {
+        petStorage.readPlayerData(input, ((ServerPlayer)(Object)this));
     }
 
     @Override

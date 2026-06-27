@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleBuilder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.gamerules.GameRule;
 import net.minecraft.world.level.gamerules.GameRuleCategory;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,7 @@ public class PPeTP implements ModInitializer {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static final GameRule<Boolean> SHOULD_TP_CROSS_DIMENSIONAL = GameRuleBuilder
+	public static final GameRule<@NotNull Boolean> SHOULD_TP_CROSS_DIMENSIONAL = GameRuleBuilder
             .forBoolean(false)
             .category(GameRuleCategory.MOBS)
             .buildAndRegister(Identifier.fromNamespaceAndPath(MOD_ID, "pet_teleport_cross_dimension"));

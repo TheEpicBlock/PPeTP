@@ -29,8 +29,8 @@ public abstract class AddNbtToSchema extends NamespacedSchema {
     }
 
     @Inject(method = "registerTypes", at = @At("HEAD"))
-    private void captureSchema(Schema schemax, Map<String, Supplier<TypeTemplate>> entityTypes, Map<String, Supplier<TypeTemplate>> blockEntityTypes, CallbackInfo ci) {
-        SCHEMA = schemax;
+    private void captureSchema(Schema schema, Map<String, Supplier<TypeTemplate>> entityTypes, Map<String, Supplier<TypeTemplate>> blockEntityTypes, CallbackInfo ci) {
+        SCHEMA = schema;
     }
 
     @ModifyReturnValue(method = "lambda$registerTypes$2", at = @At("RETURN"))
