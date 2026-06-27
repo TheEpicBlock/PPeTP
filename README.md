@@ -3,7 +3,7 @@
 
 Have you ever been exploring, and found a cool dog, cat or parrot?
 Have you ever continued exploring only to find that pet not following you anymore?
-This mod fixes that! In vanilla, pets stop following you if they're outside of simulation distance.
+This mod fixes that! In vanilla, pets stop following you if they're outside of simulation/render distance.
 This mod ensures they follow you around either way. You can't accidentally lose your pet anymore!
 
 ## What if my dog's sitting?
@@ -25,7 +25,10 @@ PPeTP retains the vanilla behaviour of not teleporting across dimensions. If you
 mod will still allow your pet to teleport to you, but only once you're back in the overworld.
 You can change this behaviour using `/gamerule petTeleportCrossDimension`. When set to true, your pet will teleport to
 you even if it's in another dimension. If it's false, pets will only switch dimensions if they themselves touch a portal
-(like in vanilla). This behaviour may be confusing if a pet accidentally walks through a portal.
+(like in vanilla). The vanilla behaviour may be confusing if a pet accidentally walks through a portal.
 
 ## Does this work with modded pets?
 Yeah, if they reuse Minecraft's code for tameable entities, it should be fine!
+
+# Does this load chunks?
+No, it specifically doesn't load chunks. See the "how" section for details.
