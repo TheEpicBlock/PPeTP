@@ -3,6 +3,7 @@ package nl.theepicblock.gametest;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.wolf.Wolf;
@@ -26,6 +27,7 @@ public class BasicGameTest {
         world.addFreshEntity(pet);
         pet.tame(player);
         pet.setPos(testCenter);
+        pet.setCustomName(Component.literal("Jeffrey"));
         var uuidPet = pet.getUUID();
 
         // Execute teleport
@@ -40,7 +42,9 @@ public class BasicGameTest {
             player.setPos(testCenter);
             context.runAfterDelay(10, () -> {
                 context.assertTrue(world.getEntity(uuidPet) != null, "Pet should've teleported back into the world");
-                context.assertValueEqual(0, ((PlayerDuck)player).PPeTP$getStorage().getNumberOfStoredPets(), "Pet should've teleported back into the world");
+                context.assertValueEqual(((PlayerDuck)player).PPeTP$getStorage().getNumberOfStoredPets(), 0, "Pet should've teleported back into the world");
+                context.assertValueEqual(world.getEntity(uuidPet).getCustomName(), Component.literal("Jeffrey"), "Pet should retai custom data");
+                context.assertValueEqual(world.getEntity(uuidPet).getType(), EntityTypes.WOLF, "Pet should not change entity types");
                 context.succeed();
             });
         });
