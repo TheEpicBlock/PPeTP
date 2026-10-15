@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT'
 	id 'maven-publish'
 	id "com.modrinth.minotaur" version "2.+"
 }
@@ -103,7 +103,8 @@ modrinth {
 	loaders = ["fabric", "quilt"]
 	changelog = System.getenv("CHANGELOG")
 	syncBodyFrom = "<!--DO NOT EDIT MANUALLY: synced from gh readme-->\n" + rootProject.file("README.md").text
-	dependencies {
+    environment = "server_only"
+    dependencies {
 		required.project("fabric-api")
 	}
 }

@@ -26,7 +26,7 @@ public class EntityShouldTPTest {
                 context.assertFalse(shouldTp(entityType), " precondition failed, "+BuiltInRegistries.ENTITY_TYPE.getKey(entityType)+" should tp but it could not be created");
                 continue;
             }
-            entity.setInvulnerable(true);
+            entity.setPermanentlyInvulnerable(true);
             entity.setPos(pos);
             world.addFreshEntity(entity);
             if (entity instanceof TamableAnimal pet) {
